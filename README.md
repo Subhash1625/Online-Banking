@@ -11,6 +11,8 @@
     Create Following  File Floder Structured:
     -    ```app.py```  For Flask App <br>
     -   ```requirements.txt```For Pre-requirments Moduls <br>
+    -   ```database```For Connection into MYSQL Workbench
+  
     -   ```templates``` folder - For HTML Files <br>
     -   ```static``` folder - For Styling Files <br>
     -   ```gitignore``` <br>
@@ -18,3 +20,5 @@
 - Step 4:
     Install Pre-requirment Moduls. <br>
     ```pip Install -r requriments.txt```
+    ```mysql-connector-python```
+    ```Pandas```

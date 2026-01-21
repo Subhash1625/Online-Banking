@@ -1,187 +1,45 @@
-# from flask import Flask, render_template, redirect, request, url_for, session
-
-# app = Flask(__name__)
-# app.secret_key = 'supersecretkey'
-# accounts = {
-#     'user': 'pass',
-#     'user2': 'pass2'}
-
-
-# amounts = {
-#     'user': 1000
-#     , 'user2': 1500
-
-# }
-
-# @app.route('/')
-# def home():
-#     return render_template('home.html')
-
-
-
-# @app.route("/login", methods=['GET', 'POST'])
-# def login_post():
-#     if request.method == 'POST':
-#         username = request.form['username']
-#         password = request.form['password']
-
-#         if not username or not password:
-#             return render_template('login.html', msg="Enter the details")
-
-#         if username in accounts and accounts[username] == password:
-#             session['user'] = username   # ✅ FIX
-#             return redirect(url_for('dashboard'))
-
-#         return render_template('login.html', msg="Incorrect credentials")
-
-#     return render_template("login.html")
-
-
-# @app.route('/dashboard')
-# def dashboard():
-#     if 'user' in session:
-#         return render_template('dashboard.html', user=session['user'])
-#     return redirect(url_for('login_post')) 
-
-
-# @app.route('/balance')
-# def balance():
-#     if 'user' in session:
-#         user = session['user']
-#         return render_template('balance.html', balance=amounts[user])
-#     return redirect(url_for('login_post'))
-
-
-
-# @app.route('/withdraw', methods=['GET', 'POST'])
-# def withdraw():
-#     if 'user' not in session:
-#         return redirect(url_for('login_post'))
-    
-#     user = session['user']
-    
-#     if request.method == 'POST':
-#         amount = request.form.get('amount')
-        
-#         if not amount or not amount.isdigit():
-#             return "Enter a valid amount", 400
-        
-#         amount = int(amount)
-        
-#         if amount <= 0:
-#             return "Amount must be greater than zero", 400
-        
-#         if amount > amounts[user]:
-#             return "Insufficient balance", 400
-        
-#         # Perform withdrawal
-#         amounts[user] -= amount
-        
-#         # Optional: flash message or just redirect to balance
-#         return redirect(url_for('balance'))  # Better: show updated balance
-    
-#     # This only runs on GET request
-#     return render_template('withdraw.html')
-
-
-# @app.route('/deposit', methods=['GET', 'POST'])
-# def deposit():
-#     if 'user' not in session:
-#         return redirect(url_for('login_post'))
-#     user = session['user']
-#     if request.method == 'POST':
-#         amount = request.form.get('amount')
-    
-#         if not amount or not amount.isdigit():
-#             return "Enter a valid amount", 400
-#         amount = int(amount)
-#         if amount <= 0:
-#             return "Amount must be greater than zero", 400
-    
-#         amounts[user] += amount
-#         return redirect(url_for('balance'))  # ← Redirect after success!
-
-#     return render_template('deposit.html')  # Only on GET
-
-
-
-# @app.route('/transfer', methods=['GET', 'POST'])
-# def transfer():
-#     if 'user' not in session:
-#         return redirect(url_for('login_post'))
-
-#     sender = session['user']
-
-#     if request.method == 'POST':
-#         receiver = request.form.get('receiver')
-#         amount = request.form.get('amount')
-
-#         if receiver not in amounts:
-#             return render_template('transfer.html',
-#                                    msg="Receiver account not found")
-
-#         if receiver == sender:
-#             return render_template('transfer.html',
-#                                    msg="Cannot transfer to same account")
-
-#         if not amount or not amount.isdigit():
-#             return render_template('transfer.html',
-#                                    msg="Enter valid amount")
-
-#         amount = int(amount)
-
-#         if amount <= 0:
-#             return render_template('transfer.html',
-#                                    msg="Amount must be greater than zero")
-
-#         if amount > amounts[sender]:
-#             return render_template('transfer.html',
-#                                    msg="Insufficient balance")
-
-#         # ✅ Transfer
-#         amounts[sender] -= amount
-#         amounts[receiver] += amount
-
-#         return redirect(url_for('balance'))
-
-#     return render_template('transfer.html')
-
-
-
-
-
-
-
-
-# @app.route('/logout')
-# def logout():
-#     session.pop('user', None)
-#     return render_template('home.html')
-
-
-
-
-
-# if __name__ == '__main__':
-#     app.run(debug=True)
-
-from flask import Flask, render_template, redirect, request, url_for, session
+<<<<<<< HEAD
+from flask import Flask, render_template, request, redirect, url_for, session, flash
+=======
+from flask import Flask, render_template, request, redirect, url_for, session
+>>>>>>> fb96b92cb73b5599d0987adabf1cc9896858c01f
+from database.tables import create_tables
+from database.utility import (
+    addUser,
+    validate_user,
+    get_balance,
+    update_balance
+)
 
 app = Flask(__name__)
-app.secret_key = 'supersecretkey'
+app.secret_key = "supersecretkey"
+
+create_tables()
+<<<<<<< HEAD
 
 
-accounts = {
-    'user': 'pass',
-    'user2': 'pass2'
+
+
+USERS = {
+    "admin": {"password": "admin123", "balance": 5000},
+    "subhash": {"password": "subhash123", "balance": 3000},
+    "user1": {"password": "user123", "balance": 1000}
+    # you can add more users here
 }
 
 
-amounts = {
-    'user': 100000,
-    'user2': 50000
-}
 
+
+
+
+=======
+
+addUser('user2', 'pass2')
+
+
+
+
+>>>>>>> fb96b92cb73b5599d0987adabf1cc9896858c01f
 
 
 @app.route('/')
@@ -189,17 +47,35 @@ def home():
     return render_template('home.html')
 
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        if not username or not password:
+            return render_template('register.html', msg="Fill all fields")
+
+        if addUser(username, password):
+            return redirect(url_for('login'))
+
+        return render_template('register.html', msg="User already exists")
+
+    return render_template('register.html')
+
 
 @app.route('/login', methods=['GET', 'POST'])
-def login_post():
+def login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
 
-        if not username or not password:
-            return render_template('login.html', msg="Enter all details")
-
-        if username in accounts and accounts[username] == password:
+<<<<<<< HEAD
+        if username in USERS and USERS[username]['password'] == password:
+=======
+        
+        if username == 'admin' and password == 'admin123':
+>>>>>>> fb96b92cb73b5599d0987adabf1cc9896858c01f
             session['user'] = username
             return redirect(url_for('dashboard'))
 
@@ -209,113 +85,179 @@ def login_post():
 
 
 
+
 @app.route('/dashboard')
 def dashboard():
     if 'user' not in session:
-        return redirect(url_for('login_post'))
+        return redirect(url_for('login'))
 
     return render_template('dashboard.html', user=session['user'])
-
 
 
 @app.route('/balance')
 def balance():
     if 'user' not in session:
-        return redirect(url_for('login_post'))
+        return redirect(url_for('login'))
+<<<<<<< HEAD
 
-    user = session['user']
-    return render_template('balance.html', balance=amounts[user])
+    username = session['user']
+    bal = USERS[username]['balance']
+    return render_template('balance.html', balance=bal)
+
+=======
+
+    bal = get_balance(session['user'])
+    return render_template('balance.html', balance=bal)
+>>>>>>> fb96b92cb73b5599d0987adabf1cc9896858c01f
 
 
 
 @app.route('/deposit', methods=['GET', 'POST'])
 def deposit():
     if 'user' not in session:
-        return redirect(url_for('login_post'))
+        return redirect(url_for('login'))
 
-    user = session['user']
-
+    msg = None
     if request.method == 'POST':
-        amount = request.form.get('amount')
+<<<<<<< HEAD
+        username = session['user']
+        amount = int(request.form.get('amount', 0))
 
-        if not amount or not amount.isdigit():
-            return render_template('deposit.html', msg="Enter valid amount")
+        # Update balance
+        USERS[username]['balance'] += amount
 
-        amount = int(amount)
-
-        if amount <= 0:
-            return render_template('deposit.html', msg="Amount must be > 0")
-
-        amounts[user] += amount
-        return redirect(url_for('balance'))
+        return render_template('deposit.html', msg=f"₹{amount} deposited successfully!")
 
     return render_template('deposit.html')
+=======
+        try:
+            amount = int(request.form['amount'])
+            if amount <= 0:
+                msg = "Enter a positive amount"
+            else:
+                
+                bal = get_balance(session['user'])
+                
+                update_balance(session['user'], bal + amount)
+                return redirect(url_for('balance'))
+        except ValueError:
+            msg = "Enter a valid number"
+
+    return render_template('deposit.html', msg=msg)
+
+>>>>>>> fb96b92cb73b5599d0987adabf1cc9896858c01f
+
+
+
 
 
 
 @app.route('/withdraw', methods=['GET', 'POST'])
 def withdraw():
     if 'user' not in session:
-        return redirect(url_for('login_post'))
-
-    user = session['user']
+        return redirect(url_for('login'))
 
     if request.method == 'POST':
-        amount = request.form.get('amount')
-
-        if not amount or not amount.isdigit():
-            return render_template('withdraw.html', msg="Enter valid amount")
-
-        amount = int(amount)
+<<<<<<< HEAD
+        username = session['user']
+        amount = int(request.form.get('amount', 0))
 
         if amount <= 0:
-            return render_template('withdraw.html', msg="Amount must be > 0")
+            msg = "Enter a valid amount."
+        elif amount > USERS[username]['balance']:
+            msg = "Insufficient balance."
+        else:
+            USERS[username]['balance'] -= amount
+            msg = f"₹{amount} withdrawn successfully!"
 
-        if amount > amounts[user]:
+        return render_template('withdraw.html', msg=msg)
+=======
+        amount = int(request.form['amount'])
+        bal = get_balance(session['user'])
+
+        if amount > bal:
             return render_template('withdraw.html', msg="Insufficient balance")
 
-        amounts[user] -= amount
+        update_balance(session['user'], bal - amount)
         return redirect(url_for('balance'))
+>>>>>>> fb96b92cb73b5599d0987adabf1cc9896858c01f
 
     return render_template('withdraw.html')
 
 
+<<<<<<< HEAD
 
+
+=======
+>>>>>>> fb96b92cb73b5599d0987adabf1cc9896858c01f
 @app.route('/transfer', methods=['GET', 'POST'])
 def transfer():
     if 'user' not in session:
-        return redirect(url_for('login_post'))
-
-    sender = session['user']
+        return redirect(url_for('login'))
+<<<<<<< HEAD
 
     if request.method == 'POST':
+        sender = session['user']
         receiver = request.form.get('receiver')
-        amount = request.form.get('amount')
+        amount = int(request.form.get('amount', 0))
 
-        if receiver not in amounts:
-            return render_template('transfer.html', msg="Receiver not found")
+        # Check if receiver exists
+        if receiver not in USERS:
+            return render_template('transfer.html', msg="Receiver does not exist!")
 
-        if receiver == sender:
-            return render_template('transfer.html', msg="Cannot transfer to same account")
+        # Check if sender has enough balance
+        if USERS[sender]['balance'] < amount:
+            return render_template('transfer.html', msg="Insufficient balance!")
 
-        if not amount or not amount.isdigit():
-            return render_template('transfer.html', msg="Enter valid amount")
+        # Perform transfer
+        USERS[sender]['balance'] -= amount
+        USERS[receiver]['balance'] += amount
 
-        amount = int(amount)
-
-        if amount <= 0:
-            return render_template('transfer.html', msg="Amount must be > 0")
-
-        if amount > amounts[sender]:
-            return render_template('transfer.html', msg="Insufficient balance")
-
-        amounts[sender] -= amount
-        amounts[receiver] += amount
-
-        return redirect(url_for('balance'))
+        return render_template('transfer.html', msg=f"₹{amount} transferred to {receiver} successfully!")
 
     return render_template('transfer.html')
+=======
 
+    msg = None
+
+    if request.method == 'POST':
+        to_user = request.form.get('to_user')
+        amount_str = request.form.get('amount')
+
+        if not to_user or not amount_str:
+            msg = "All fields are required"
+        else:
+            try:
+                amount = int(amount_str)
+                if amount <= 0:
+                    msg = "Enter a positive amount"
+                else:
+                    from_user = session['user']
+
+                    if from_user == to_user:
+                        msg = "You cannot transfer to yourself"
+                    else:
+                        sender_balance = get_balance(from_user)
+
+                        if sender_balance < amount:
+                            msg = "Insufficient balance"
+                        else:
+                            receiver_balance = get_balance(to_user)
+
+                            if receiver_balance is None:
+                                msg = "Receiver account does not exist"
+                            else:
+                                # update balances
+                                update_balance(from_user, sender_balance - amount)
+                                update_balance(to_user, receiver_balance + amount)
+
+                                return redirect(url_for('balance'))
+
+            except ValueError:
+                msg = "Enter a valid number"
+>>>>>>> fb96b92cb73b5599d0987adabf1cc9896858c01f
+
+    return render_template('transfer.html', msg=msg)
 
 
 @app.route('/logout')
@@ -324,7 +266,5 @@ def logout():
     return redirect(url_for('home'))
 
 
-
 if __name__ == '__main__':
     app.run(debug=True)
-
